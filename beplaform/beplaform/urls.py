@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 """beplaform URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -14,8 +15,37 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf.urls.static import static
+from django.contrib.staticfiles.finders import find
+from django.conf.urls import url
+from django.conf import settings
+from django.shortcuts import render
+
+
+# def index(request, path=''):
+#     print("12")
+#     return find(settings.STATIC_PATH)
+
+
+def index(request, path=''):
+    print("1")
+    return render(request, settings.HOMEFILE_PATH)
+    # return find(settings.STATIC_PATH)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # rest
+    path('api-auth/', include('rest_framework.urls')),
+
+
+    # angular routes
+    url(r'^$', index, name='index'),
+    url(r'^post/?', index, name='index'),
+    url(r'^detail/?', index, name='index'),
+    url(r'^register/?', index, name='index'),
+    url(r'^login/?', index, name='index'),
+    *static('/', document_root=settings.STATIC_PATH),
 ]
