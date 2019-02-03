@@ -17,21 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
-from django.contrib.staticfiles.finders import find
 from django.conf.urls import url
 from django.conf import settings
 from django.shortcuts import render
 
 
-# def index(request, path=''):
-#     print("12")
-#     return find(settings.STATIC_PATH)
-
-
 def index(request, path=''):
-    print("1")
     return render(request, settings.HOMEFILE_PATH)
-    # return find(settings.STATIC_PATH)
 
 
 urlpatterns = [
@@ -40,6 +32,8 @@ urlpatterns = [
     # rest
     path('api-auth/', include('rest_framework.urls')),
 
+    # api
+    url(r'^api/', include('api.urls'), name='api'),
 
     # angular routes
     url(r'^$', index, name='index'),

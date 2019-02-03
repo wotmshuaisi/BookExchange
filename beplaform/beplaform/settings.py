@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'api',
+    'siteinfo',
+    'books',
 ]
 
 MIDDLEWARE = [
@@ -125,10 +128,10 @@ STATIC_URL = '/static/'
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 10
 }
+
 
 # HOMEFILE_PATH = os.path.join(BASE_DIR, 'frontend/')
 HOMEFILE_PATH = os.path.join(BASE_DIR, 'frontend/index.html')
