@@ -136,3 +136,7 @@ REST_FRAMEWORK = {
 # HOMEFILE_PATH = os.path.join(BASE_DIR, 'frontend/')
 HOMEFILE_PATH = os.path.join(BASE_DIR, 'frontend/index.html')
 STATIC_PATH = os.path.join(BASE_DIR, 'frontend/')
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
