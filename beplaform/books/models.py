@@ -25,6 +25,11 @@ class BooksInfo(models.Model):
     def __str__(self,):
         return 'ID {} | 标题 {} | 价格 {} | 可换 {} | 发布时间 {}'.format(self.id, self.title, self.price, self.available, self.datetime)
 
+    class Meta:
+        permissions = (
+            ('read_item', 'Can read item'),
+        )
+
 
 class MarkedBook(models.Model):
     id = models.AutoField(primary_key=True)
