@@ -6,6 +6,7 @@ import { DetailComponent } from './home/detail/detail.component';
 import { PostComponent } from './home/post/post.component';
 import { RegisterComponent } from './home/register/register.component';
 import { LoginComponent } from './home/login/login.component';
+import { OrdersComponent } from './home/orders/orders.component';
 
 const routes: Routes = [
   {
@@ -16,6 +17,7 @@ const routes: Routes = [
       { path: 'post', component: PostComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'login', component: LoginComponent },
+      { path: 'orders', component: OrdersComponent },
     ]
   },
 ];

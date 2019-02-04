@@ -13,62 +13,73 @@
 
     <div class="col-md-12 post-box">
 
-        <form>
+        <form [formGroup]="formGroup">
+            <div class="form-group">
+                <label>标题</label>
+                <input type="text" formControlName="title" class="form-control">
+            </div>
             <div class="form-group">
                 <label>作者</label>
-                <input type="text" class="form-control">
+                <input type="text" formControlName="author" class="form-control">
             </div>
             <div class="form-group">
                 <label>出版社</label>
-                <input type="text" class="form-control">
+                <input type="text" formControlName="press" class="form-control">
             </div>
             <div class="form-group">
                 <label>ISBN</label>
-                <input type="text" class="form-control">
+                <input type="text" formControlName="isbn" class="form-control">
             </div>
             <div class="form-group">
                 <label>出版日期</label>
-                <input type="month" class="form-control">
+                <input type="date" formControlName="month" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>购买日期</label>
+                <input type="date" formControlName="boughtdate" class="form-control">
             </div>
             <div class="form-group">
                 <label>页数</label>
-                <input type="number" class="form-control">
+                <input type="number" formControlName="page" class="form-control">
             </div>
             <div class="form-group">
                 <label>定价</label>
-                <input type="number" class="form-control">
+                <input type="number" formControlName="price" class="form-control">
             </div>
             <div class="form-group">
                 <label>成色</label>
-                <select class="form-control">
-                    <option>9成</option>
-                    <option>8成</option>
-                    <option>7成及以下</option>
+                <select formControlName="quality" class="form-control">
+                    <option value="1">9成</option>
+                    <option value="2">8成</option>
+                    <option value="3">7成及以下</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>书籍分类</label>
-                <select class="form-control">
-                    <option>一类书籍</option>
-                    <option>二类书籍</option>
-                    <option>三类书籍</option>
+                <select formControlName="category" class="form-control">
+                    <option *ngFor="let item of categorys" value={{item.id}}>{{item.title}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>交换需求</label>
-                <select class="form-control">
-                    <option>一类书籍</option>
-                    <option>二类书籍</option>
-                    <option>三类书籍</option>
+                <select formControlName="wonder" class="form-control">
+                    <option *ngFor="let item of categorys" value={{item.id}}>{{item.title}}</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>上传图片</label>
-                <input type="file" class="form-control-file">
+                <input type="hidden" formControlName="img" value="">
+                <input type="file" (change)="uploadfile($event)" class="form-control-file">
             </div>
+
+            <div *ngIf="formGroup.hasError('err')">
+                {{ this.formGroup.errors }}
+            </div>
+
             <div class="form-group">
-                <button type="button" class="btn btn-success btn-lg">我想交换</button>
+                <button type="button" (click)="post()" class="btn btn-success btn-lg">我想交换</button>
             </div>
+
         </form>
 
     </div>
