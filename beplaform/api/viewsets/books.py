@@ -2,11 +2,15 @@ from django.db.models import Q
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
-
+# from rest_framework.decorators import permission_classes as pc, authentication_classes as ac
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from api.serializers import BooksInfoSerializer, MarkedBookSerializer, AddressSerializer, OrdersSerializer, OrdersESerializer
 from util.permission import IsSuperUser
 from books.models import BooksInfo, MarkedBook, Address, Orders
+from rest_framework.authentication import BasicAuthentication
+from util.permission import CsrfExemptSessionAuthentication as SessionAuthentication
 
 
 class BooksInfoViewSet(ModelViewSet):
@@ -14,9 +18,29 @@ class BooksInfoViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post',
                          'update', 'delete', 'head', 'options', ]
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filter_fields = ('category', 'id', )
+    search_fields = ('title',)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
-    def get_queryset(self,):
-        return BooksInfo.objects.filter(user=self.request.user).all()
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [AllowAny, ]
+        else:
+            self.permission_classes = [IsAuthenticated, ]
+        return super(BooksInfoViewSet, self).get_permissions()
+
+    def get_queryset(self):
+        return BooksInfo.objects.all().values()
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, ],)
+    def mybooks(self, request):
+        c = {
+            'user': self.request.user,
+        }
+        if request.query_params.get('cid'):
+            c['category_id'] = request.query_params.get('cid')
+        return Response(BooksInfo.objects.filter(**c).values())
 
     def create(self, request):
         s = BooksInfoSerializer(data=request.data, many=False)
@@ -28,8 +52,11 @@ class BooksInfoViewSet(ModelViewSet):
 
 class MarkedBookViewSet(ModelViewSet):
     serializer_class = MarkedBookSerializer
-    permission_classes = [IsAuthenticated]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = [IsAuthenticated, ]
     http_method_names = ['get', 'post', 'delete', 'head', 'options', ]
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('id', 'book',)
 
     def get_queryset(self,):
         return MarkedBook.objects.filter(user=self.request.user).all()
@@ -46,6 +73,7 @@ class AddressViewSet(ViewSet):
     serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'put', 'head', 'options', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
     def list(self, request):
         return Response(AddressSerializer(Address.objects.filter(user=request.user).first(), many=False).data)
@@ -66,6 +94,7 @@ class OrdersViewSet(ModelViewSet):
     serializer_class = OrdersSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'delete', 'head', 'options', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
     def get_queryset(self,):
         return Orders.objects.filter(Q(user=self.request.user) | Q(book__user=self.request.user)).all()

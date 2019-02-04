@@ -25,7 +25,6 @@ class ImageTool:
 def image_upload(request):
     if request.method != "POST":
         return HttpResponse()
-    print(request.FILES)
     source = request.FILES.get('file')
     if source != None:
         source.name = ImageTool.get_new_random_file_name(source.name)

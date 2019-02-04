@@ -1,6 +1,7 @@
 from books.models import BooksInfo, MarkedBook, Address, Orders
 from siteinfo.models import Siteinfo, BookCategory
 from rest_framework import serializers
+from django.contrib.auth.models import User
 
 
 class SiteinfoSerializer(serializers.ModelSerializer):
@@ -16,24 +17,36 @@ class BookcategorySerializer(serializers.ModelSerializer):
 
 
 class BooksInfoSerializer(serializers.ModelSerializer):
-    user_email = serializers.ReadOnlyField(source='user.email')
-    category_name = serializers.ReadOnlyField(source='category.title')
     available = serializers.ReadOnlyField()
     id = serializers.ReadOnlyField()
     datetime = serializers.ReadOnlyField()
 
     def get_user_address(self, obj):
-        a = Address.objects.filter(user=obj.user).first()
+        a = Address.objects.filter(user_id=obj['user_id']).first()
         if a == None:
             return ''
         return a.address
 
+    def get_category_name(self, obj):
+        a = BookCategory.objects.filter(id=obj['category_id']).first()
+        if a == None:
+            return ''
+        return a.title
+
+    def get_user_email(self, obj):
+        a = User.objects.filter(id=obj['user_id']).first()
+        if a == None:
+            return ''
+        return a.email
+
+    category_name = serializers.SerializerMethodField()
     user_address = serializers.SerializerMethodField()
+    user_email = serializers.SerializerMethodField()
 
     class Meta:
         model = BooksInfo
-        fields = ("id", "wonder", "title", "author", "press", "isbn", "month", "boughtdate", 'category',
-                  "price", "page", "quality", "datetime", "img", "available", "user_email", "category_name", 'user_address')
+        fields = ("id", "wonder", "title", "author", "press", "isbn", "month", "boughtdate", 'category_id', 'category', 'category_name',
+                  "price", "page", "quality", "datetime", "img", "available", "user_id", 'user_email', 'user_address')
 
 
 class MarkedBookSerializer(serializers.ModelSerializer):

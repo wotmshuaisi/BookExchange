@@ -46,5 +46,6 @@ urlpatterns = [
     url(r'^detail/?', index, name='index'),
     url(r'^register/?', index, name='index'),
     url(r'^login/?', index, name='index'),
+    url(r'^orders/?', index, name='index'),
     *static('/', document_root=settings.STATIC_PATH),
 ]

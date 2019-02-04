@@ -6,10 +6,12 @@ from rest_framework.viewsets import ViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
 
 class UserViewset(ViewSet):
     permission_classes = []
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
 
     def list(self, request):
         u = User.objects.filter(id=request.user.id).first()
@@ -19,7 +21,8 @@ class UserViewset(ViewSet):
             })
         return Response(status=403)
 
-    def post(self, request):
+    @action(detail=False, methods=['post', ], )
+    def register(self, request):
         user = User.objects.create(
             username=request.data.get('email'),
             email=request.data.get('email'),
@@ -28,7 +31,7 @@ class UserViewset(ViewSet):
         user.set_password(str(request.data.get('password')))
         user.groups.add(Group.objects.filter(id=1).first())
         user.save()
-        return Response({"status": "success", "response": "User Successfully Created"}, status=status.HTTP_201_CREATED)
+        return Response({"status": True}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post', ], )
     def login(self, request):
