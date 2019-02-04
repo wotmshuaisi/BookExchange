@@ -39,3 +39,4 @@ typings
 Thumbs.db
 
 __pycache__
+db.sqlite3
