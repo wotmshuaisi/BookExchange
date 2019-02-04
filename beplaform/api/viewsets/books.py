@@ -1,4 +1,3 @@
-from django.db.models import Q
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -6,8 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from api.serializers import BooksInfoSerializer, MarkedBookSerializer, AddressSerializer, OrdersSerializer, OrdersESerializer
-from util.permission import IsSuperUser
+from api.serializers import BooksInfoSerializer, MarkedBookSerializer, AddressSerializer, OrdersSerializer, OrdersESerializer, OrdersASerializer
 from books.models import BooksInfo, MarkedBook, Address, Orders
 from rest_framework.authentication import BasicAuthentication
 from util.permission import CsrfExemptSessionAuthentication as SessionAuthentication
@@ -95,13 +93,29 @@ class OrdersViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     http_method_names = ['get', 'post', 'delete', 'head', 'options', ]
     authentication_classes = (SessionAuthentication, BasicAuthentication)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('id',)
 
     def get_queryset(self,):
-        return Orders.objects.filter(Q(user=self.request.user) | Q(book__user=self.request.user)).all()
+        return Orders.objects.filter(user=self.request.user).all()
 
-    def create(self, request):
-        s = OrdersSerializer(data=request.data, many=False)
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated, ])
+    def tome(self, request):
+        v = Orders.objects.filter(
+            book__user_id=self.request.query_params.get('uid')).all().values()
+        print(v)
+        for vv in v:
+            if vv.get('user_id'):
+                a = Address.objects.filter(user_id=vv.get('user_id')).first()
+                vv['user_address'] = a.address
+        return Response(v)
+
+    @action(detail=False, methods=['post'], serializer_class=OrdersASerializer, permission_classes=[IsAuthenticated, ])
+    def start(self, request):
+        s = OrdersASerializer(data=request.data, many=False)
+        print("-------")
         s.is_valid(raise_exception=True)
+        print("222-------")
 
         condition = BooksInfo.objects.filter(user=self.request.user,
                                              id=s.validated_data.get('condition')).first()

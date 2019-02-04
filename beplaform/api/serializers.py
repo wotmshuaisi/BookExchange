@@ -28,7 +28,8 @@ class BooksInfoSerializer(serializers.ModelSerializer):
         return a.address
 
     def get_category_name(self, obj):
-        a = BookCategory.objects.filter(id=obj['category_id']).first()
+        a = BookCategory.objects.filter(
+            id=obj['category_id']).first()
         if a == None:
             return ''
         return a.title
@@ -63,21 +64,26 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class OrdersSerializer(serializers.ModelSerializer):
-    def get_condition(self, obj):
-        a = BooksInfo.objects.filter(id=obj.condition).first()
-        if a == None:
-            return ''
-        s = BooksInfoSerializer(instance=a, many=False)
-        # s.is_valid(raise_exception=False)
-        return s.data
+    # def get_condition(self, obj):
+    #     a = BooksInfo.objects.filter(id=obj.condition).first()
+    #     if a == None:
+    #         return ''
+    #     s = BooksInfoSerializer(instance=a, many=False)
+    #     return s.data
 
-    condition = serializers.SerializerMethodField()
+    # bookemail = serializers.
     status = serializers.ReadOnlyField()
-    book = BooksInfoSerializer(many=False)
+    # book = BooksInfoSerializer(many=False)
 
     class Meta:
         model = Orders
         fields = ('id', 'status', 'book', 'datetime', 'condition')
+
+
+class OrdersASerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Orders
+        fields = ('book', 'condition')
 
 
 class OrdersESerializer(serializers.Serializer):

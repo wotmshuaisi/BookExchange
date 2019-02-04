@@ -17,6 +17,7 @@ class UserViewset(ViewSet):
         u = User.objects.filter(id=request.user.id).first()
         if u:
             return Response({
+                'id': u.id,
                 'email': u.email,
             })
         return Response(status=403)
