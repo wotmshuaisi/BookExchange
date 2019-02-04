@@ -12,7 +12,7 @@ export class RouterUtils {
     }
 
     ToIndex() {
-        this.r.navigateByUrl('/');
+        window.location.href = '/';
     }
 
 

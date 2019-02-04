@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RouterUtils } from 'src/app/utils/router';
 import { DjangorestService } from 'src/app/djangorest.service';
+import { Validators, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-detail',
@@ -9,18 +10,27 @@ import { DjangorestService } from 'src/app/djangorest.service';
   styleUrls: ['./detail.component.less']
 })
 export class DetailComponent implements OnInit {
+  @Input() formGroup: FormGroup;
   book: any;
   id: string;
   marked = false;
   mid: number;
   condition = true;
   email = 0;
-
+  mybook: any;
   constructor(
+    private formBuilder: FormBuilder,
     private activeRoute: ActivatedRoute,
     private usersSrv: DjangorestService,
     private rUtils: RouterUtils,
   ) {
+
+    this.formGroup = this.formBuilder.group({
+      'b': new FormControl('', [
+        Validators.required,
+      ]),
+    });
+
     this.id = this.activeRoute.snapshot.queryParams.id;
     if (this.id.length <= 0) {
       this.rUtils.ToIndex();
@@ -55,27 +65,30 @@ export class DetailComponent implements OnInit {
           this.book.quality = '未知';
           break;
       }
-
       if (this.book.user_email === this.email) {
         this.condition = false;
       }
       if (!this.book.available) {
         this.condition = false;
       }
-
-      this.usersSrv.getmybooks(this.book.category_id).subscribe((res) => {
-        if (res.length < 1) {
-          this.condition = false;
-        }
-      });
-
+      this.getmybook();
     });
 
 
 
   }
 
+  getmybook() {
+    this.usersSrv.getmybooks(this.book.category_id).subscribe((res) => {
+      if (res.length < 1) {
+        this.condition = false;
+      }
+      this.mybook = res;
+    });
+  }
+
   ngOnInit() {
+
   }
 
   mark() {
@@ -102,6 +115,27 @@ export class DetailComponent implements OnInit {
       document.location.reload();
     });
 
+  }
+
+  post() {
+    this.usersSrv.getuser().subscribe((res) => {
+      if (res.email.length < 1) {
+        this.rUtils.ToLogin();
+      }
+    });
+    if (this.formGroup.valid) {
+      const bid: string = this.formGroup.get('b').value;
+      this.usersSrv.startorder(parseInt(this.id, 10), parseInt(bid, 10)).subscribe(
+        (res) => {
+          window.alert('发起成功');
+          window.location.href = '/orders/';
+        },
+        (err) => {
+          window.alert('发起失败');
+          window.location.reload();
+        }
+      );
+    }
   }
 
 }

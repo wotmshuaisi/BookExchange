@@ -57,7 +57,6 @@ export class DjangorestService {
     if (cid >= 1) {
       uri = '/api/books/mybooks/?cid=' + cid;
     }
-
     return this.http.get(uri);
   }
 
@@ -82,6 +81,22 @@ export class DjangorestService {
 
   postbook(data): Observable<any> {
     return this.http.post('/api/books/', data, { headers: this.defaultHeaders });
+  }
+
+  getorders(uid: number): Observable<any> {
+    let uri = '/api/orders/';
+    if (uid > 0) {
+      uri = uri + 'tome/?uid=' + uid;
+    }
+    return this.http.get(uri);
+  }
+
+  startorder(book: number, condition: number): Observable<any> {
+    return this.http.post('/api/orders/start/', { book: book, condition: condition }, { headers: this.defaultHeaders });
+  }
+
+  exchange(id: string): Observable<any> {
+    return this.http.post('/api/orders/exchange/', { order_id: id }, { headers: this.defaultHeaders });
   }
 
   uploadfile(data: FormData): Observable<any> {

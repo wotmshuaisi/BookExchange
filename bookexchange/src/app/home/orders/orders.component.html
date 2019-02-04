@@ -10,8 +10,94 @@
 </div>
 
 <div class="row ml-0 mr-0">
-  <div class="col-md-4 bookimg-box">
+  <div class="col-md-4">
+    <ul class="list-group">
+      <li class="list-group-item">
+        <h3>订单类型</h3>
+      </li>
+      <li class="list-group-item">
+        <a class="btn btn-danger text-light" data-toggle="collapse" data-target="#ecme" aria-expanded="false"
+          aria-controls="ecme">我与他人交换</a>
+      </li>
+      <li class="list-group-item">
+        <a class="btn btn-danger text-light" data-toggle="collapse" data-target="#ecothers" aria-expanded="false"
+          aria-controls="ecothers">他人与我交换</a>
+      </li>
+    </ul>
   </div>
-  <div class="col-md-8 bookimg-box">
+  <div class="col-md-8">
+    <div class="collapse mb-md-3" id="ecme">
+      <h3>我与他人交换</h3>
+      <div class="card card-body">
+        <table class="table">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">id</th>
+              <th scope="col">我的书籍</th>
+              <th scope="col">对方书籍</th>
+              <th scope="col">对方email</th>
+              <th scope="col">对方地址</th>
+              <th scope="col">交易是否成功</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of myorders">
+              <th scope="row">{{item.id}}</th>
+              <td><a class="text-primary" href="/detail/?id={{item.bv.id}}" target="_blank">{{item.bv.title}} -
+                  {{item.bv.author}}</a></td>
+              <td><a class="text-primary" href="/detail/?id={{item.obv.id}}" target="_blank">{{item.obv.title}} -
+                  {{item.obv.author}}</a></td>
+              <td>{{item.bv.user_email}}</td>
+              <td>{{item.bv.user_address}}</td>
+              <td>
+                <ng-container *ngIf="item.status; else elseTemplate">
+                  <span class="text-success">确认交易</span>
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <span class="text-warning">等待中</span>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="collapse mb-md-3" id="ecothers">
+      <h3>他人与我交换</h3>
+      <div class="card card-body">
+        <table class="table">
+          <thead class="thead-light">
+            <tr>
+              <th scope="col">id</th>
+              <th scope="col">我的书籍</th>
+              <th scope="col">对方书籍</th>
+              <th scope="col">对方email</th>
+              <th scope="col">对方地址</th>
+              <th scope="col">交易是否成功</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of tomeorders">
+              <th scope="row">{{item.id}}</th>
+              <td><a class="text-primary" href="/detail/?id={{item.bv.id}}" target="_blank">{{item.bv.title}} -
+                  {{item.bv.author}}</a></td>
+              <td><a class="text-primary" href="/detail/?id={{item.obv.id}}" target="_blank">{{item.obv.title}} -
+                  {{item.obv.author}}</a></td>
+              <td>{{item.obv.user_email}}</td>
+              <td>{{item.obv.user_address}}</td>
+              <td>
+                <ng-container *ngIf="!item.status; else elseTemplate">
+                  <button class="btn btn-success" (click)="confirm(item.id)">确认交易</button>
+                </ng-container>
+                <ng-template #elseTemplate>
+                  <button class="btn btn-dark" disabled>已确认</button>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
   </div>
 </div>

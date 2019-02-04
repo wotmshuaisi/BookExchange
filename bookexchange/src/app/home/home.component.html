@@ -3,7 +3,8 @@
   <span class="nav-right">
 
     <ng-container *ngIf="email; else elseTemplate">
-      <a [routerLink]="[ '' ]">{{email}}</a>| <a href="/post/">发布图书</a>| <a href="/admin/books/booksinfo/">我的图书</a> |
+      <a [routerLink]="[ '' ]">{{email}}</a>| <a href="/post/">发布图书</a>| <a href="/orders/">我的订单</a> | <a href="/admin/books/booksinfo/">我的图书</a>
+      |
       <a href="/admin/books/address/">我的地址</a> |
       <a (click)="logout()">logout</a> | <a href="#">帮助</a>
     </ng-container>

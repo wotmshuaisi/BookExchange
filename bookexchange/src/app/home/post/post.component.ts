@@ -87,9 +87,6 @@ export class PostComponent implements OnInit {
   }
 
   post() {
-    console.log(this.formGroup.valid);
-    console.log(this.formGroup.errors);
-
     if (this.formGroup.valid) {
       const data = {
         wonder: this.formGroup.get('wonder').value,
